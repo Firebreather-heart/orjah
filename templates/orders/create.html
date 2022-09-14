@@ -1,0 +1,41 @@
+{% extends "shop/base.html" %}
+{% load static %}
+{% block title %}
+Checkout
+{% endblock %}
+{% block content %}
+<div class="w3-card-4 w3-padding w3-margin-right">
+    <p>Checkout</p>
+    <div class="order-info">
+        <h3>Your order</h3>
+        <ul>
+            {% for item in cart %}
+            <li>
+                {{ item.quantity }}x {{ item.product.name }}
+                <span>${{ item.total_price }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+        <p>Total: ${{ cart.get_total_price }}</p>
+    </div>
+</div>
+
+<div class="w3-card-4 w3-padding w3-round-large w3-margin-top w3-margin-left">
+    <form method="post" class="order-form">
+        {{ form.as_p }}
+        <p><input type="submit" value="Place order"></p>
+        {% csrf_token %}
+    </form>
+</div>
+<script>
+    inlist = document.getElementsByTagName('input');
+    for (var i=0; i < inlist.length; i++){
+        inlist[i].style.padding = '8px';
+        inlist[i].style.display= 'block';
+        inlist[i].style.border = '1px solid green';
+        inlist[i].style.width = '100%';
+        inlist[i].style.backgroundColour = 'green';
+        inlist[i].className += 'w3-round-large';
+    }
+</script>
+{% endblock %}

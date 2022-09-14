@@ -1,0 +1,16 @@
+*{
+    box-sizing: border-box;
+}
+
+*img{
+    width: 300px;
+}
+
+body{
+    background-color: black;
+    color:white;
+}
+a{
+    text-decoration: none;
+    font-weight: bold;
+}

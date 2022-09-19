@@ -288,9 +288,9 @@ JAZZMIN_UI_TWEAKS = {
    # "dark_mode_theme": "darkly",
 }
 
-BRAINTREE_MERCHANT_ID = 'XXX' # Merchant ID
-BRAINTREE_PUBLIC_KEY = 'XXX' # Public Key
-BRAINTREE_PRIVATE_KEY = 'XXX' # Private key
+BRAINTREE_MERCHANT_ID = '76hbqm9wqvvk6hxv' # Merchant ID
+BRAINTREE_PUBLIC_KEY = '82zqyrzpw3f6w94z' # Public Key
+BRAINTREE_PRIVATE_KEY = '2da050d0f0892a85a4a08ce8e79a8c91' # Private key
 import braintree
 BRAINTREE_CONF = braintree.Configuration(
  braintree.Environment.Sandbox,

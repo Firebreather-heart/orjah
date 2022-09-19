@@ -1,6 +1,8 @@
 from django.db import models
 from shop.models import Product 
 # Create your models here.
+from django.urls import reverse
+from django.utils.safestring import mark_safe
 
 class Order(models.Model):
     firstname = models.CharField(max_length=50)
@@ -23,6 +25,10 @@ class Order(models.Model):
     def get_total_cost(self):
         return sum(item.get_cost() for item in self.items.all())
 
+    def order_detail(obj):
+        url = reverse('orders:admin_order_detail', args=[obj.id])
+        return mark_safe(f'<a href="{url}">View</a>')
+
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order,
@@ -31,7 +37,7 @@ class OrderItem(models.Model):
     product = models.ForeignKey(Product,
                                 related_name='order_items',
                                 on_delete=models.CASCADE)
-                                
+
     price = models.DecimalField(max_digits=10, decimal_places=2)
     quantity = models.PositiveIntegerField(default=1)
 

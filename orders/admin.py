@@ -1,22 +1,19 @@
 from django.contrib import admin
 from .models import Order, OrderItem
+import csv
+import datetime
+from django.http import HttpResponse
+from django.urls import reverse
+from django.utils.safestring import mark_safe
+
 class OrderItemInline(admin.TabularInline):
     model = OrderItem
     raw_id_fields = ['product']
 
-@admin.register(Order)
-class OrderAdmin(admin.ModelAdmin):
-    list_display = ['id', 'email',
-    'address', 'postal_code', 'city', 'paid',
-    'created', 'updated']
-    list_filter = ['paid', 'created', 'updated']
-    inlines = [OrderItemInline]
-
-
-
-import csv
-import datetime
-from django.http import HttpResponse
+def order_pdf(obj):
+    url = reverse('orders:admin_order_pdf', args=[obj.id])
+    return mark_safe(f'<a href="{url}">PDF</a>')
+order_pdf.short_description = 'Invoice'
 
 def export_to_csv(modeladmin, request, queryset):
     opts = modeladmin.model._meta
@@ -38,3 +35,20 @@ def export_to_csv(modeladmin, request, queryset):
         writer.writerow(data_row)
     return response
 export_to_csv.short_description = 'Export to CSV'
+
+@admin.register(Order)
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ['id', 'email',
+    'address', 'postal_code', 'city', 'paid',
+    'created', 'updated', 'order_detail']
+    list_filter = ['paid', 'created', 'updated']
+    inlines = [OrderItemInline]
+    actions = [export_to_csv]
+    
+
+
+
+
+
+
+

@@ -12,11 +12,18 @@ Checkout
             {% for item in cart %}
             <li>
                 {{ item.quantity }}x {{ item.product.name }}
-                <span>${{ item.total_price }}</span>
+                <span>${{ item.total_price|floatformat:2 }}</span>
             </li>
             {% endfor %}
+            {% if cart.coupon %}
+            <li>
+                "{{ cart.coupon.code }}" ({{ cart.coupon.discount }}% off)
+                <span class="neg">- ${{ cart.get_discount|floatformat:2 }}</span>
+            </li>
+            {% endif %}
         </ul>
-        <p>Total: ${{ cart.get_total_price }}</p>
+        </ul>
+        <p>Total: ${{ cart.get_total_price_after_discount|floatformat:2 }}</p>
     </div>
 </div>
 
@@ -29,9 +36,9 @@ Checkout
 </div>
 <script>
     inlist = document.getElementsByTagName('input');
-    for (var i=0; i < inlist.length; i++){
+    for (var i = 0; i < inlist.length; i++) {
         inlist[i].style.padding = '8px';
-        inlist[i].style.display= 'block';
+        inlist[i].style.display = 'block';
         inlist[i].style.border = '1px solid green';
         inlist[i].style.width = '100%';
         inlist[i].style.backgroundColour = 'green';

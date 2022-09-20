@@ -19,20 +19,24 @@
 </div>
 <div id="main" class="">
     <h1>{% if category %}
-          {{ category.name }}
+        {{ category.name }}
         {% else %}
-            Products
+        Products
         {% endif %}
     </h1>
-    {% for product in products %}
-    <div class="w3-card-4 item w3-padding">
-        <a href="{{ product.get_absolute_url }}">
-            <img src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'img/noimage.png' %}{% endif %}" class="w3-image" >
-        </a>
-        <a class="w3-button w3-text" href="{{ product.get_absolute_url }}">{{ product.name|truncatewords_html:3 }} </a>
-        <br>
-        <p class="w3-padding">{{product.currency}}{{ product.price }}</p>
+    <div class=" w3-row w3-margin ">
+        {% for product in products %}
+        <div class=" w3-col s10 m5 l4 w3-card-4 item w3-padding ">
+            <a href="{{ product.get_absolute_url }}">
+                <img src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'img/noimage.png' %}{% endif %}"
+                    class="w3-image">
+            </a>
+            <a class="w3-button w3-text" href="{{ product.get_absolute_url }}">{{ product.name|truncatewords_html:3 }}
+            </a>
+            <br>
+            <p class="w3-padding">{{product.currency}}{{ product.price }}</p>
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
 </div>
 {% endblock %}

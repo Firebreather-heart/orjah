@@ -4,6 +4,18 @@ from django.conf import settings
 from orders.models import Order
 from .tasks import payment_completed
 # instantiate Braintree payment gateway
+
+# if settings.BRAINTREE_PRODUCTION:
+#         braintree_env = braintree.Environment.Production
+# else:
+#         braintree_env = braintree.Environment.Sandbox
+#     # Configure Braintree
+# braintree.Configuration.configure(
+#         braintree_env,
+#         merchant_id=settings.BRAINTREE_MERCHANT_ID,
+#         public_key=settings.BRAINTREE_PUBLIC_KEY,
+#         private_key=settings.BRAINTREE_PRIVATE_KEY,
+#     )
 gateway = braintree.BraintreeGateway(settings.BRAINTREE_CONF)
 
 def payment_process(request):
@@ -35,7 +47,7 @@ def payment_process(request):
         return render(request,
                             'payment/process.html',
                             {'order': order,
-                            'client_token': client_token})
+                            'braintree_client_token': client_token})
                         
 def payment_done(request):
     return render(request, 'payment/done.html')

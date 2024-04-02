@@ -1,7 +1,5 @@
 from io import BytesIO
 from celery import shared_task as  task
-import os
-os.add_dll_directory(r"C:\Program Files\GTK3-Runtime Win64\bin")
 #import weasyprint
 from django.template.loader import render_to_string
 # from firemail.main import sendmail

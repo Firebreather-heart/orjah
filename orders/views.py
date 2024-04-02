@@ -10,8 +10,6 @@ from django.shortcuts import get_object_or_404
 from django.conf import settings
 from django.http import HttpResponse
 from django.template.loader import render_to_string
-import os
-os.add_dll_directory(r"C:\Program Files\GTK3-Runtime Win64\bin")
 # import weasyprint
 # Create your views here.
 
@@ -26,6 +24,7 @@ def order_create(request):
                 order.coupon = cart.coupon
                 order.discount = cart.coupon.discount
                 order.save()
+            order.save()
             for item in cart:
                 OrderItem.objects.create(order = order, product=item['product'],price=item['price'],quantity=item['quantity'])
             cart.clear()

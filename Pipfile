@@ -7,6 +7,12 @@ name = "pypi"
 flower = "*"
 celery = "*"
 braintree = "*"
+django = "*"
+drf-yasg = "*"
+django-rest-framework = "*"
+whitenoise = "*"
+django-jazzmin = "*"
+pillow = "*"
 
 [dev-packages]
 

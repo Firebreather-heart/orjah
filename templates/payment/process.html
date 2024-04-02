@@ -1,64 +1,62 @@
 {% extends "shop/base.html" %}
 {% block title %}Pay by Credit card {% endblock %}
 {% block content %}
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
 <h1>Pay by credit card</h1>
-<form id="payment" method="post">
-    <label for="card-number">Card Number</label>
-    <div id="card-number" class="field"></div>
-    <label for="cvv">CVV</label>
-    <div id="cvv" class="field"></div>
-    <label for="expiration-date">Expiration Date</label>
-    <div id="expiration-date" class="field"></div>
-    <input type="hidden" id="nonce" name="payment_method_nonce" value="">
-    {% csrf_token %}
-    <input type="submit" value="Pay">
+<form >
+  {% if braintree_error %}
+    <div class="alert alert-danger fade in">
+        <button class="close" data-dismiss="alert">&times;</button>
+        {{ braintree_error|safe }}
+    </div>
+  {% endif %}
+  <div class="braintree-notifications"></div>
+  <div id="braintree-dropin"></div>
+  <input style="background-color: #0783ca" id="submit-button" class="btn btn-success btn-lg btn-block" type="button" value="Pay now!" />
 </form>
+
 <!-- includes the Braintree JS client SDK -->
-<script src="https://js.braintreegateway.com/web/3.44.2/js/client.
-min.js"></script>
-<script src="https://js.braintreegateway.com/web/3.44.2/js/hosted-fields.min.js"></script>
+<script src="https://js.braintreegateway.com/web/dropin/1.18.0/js/dropin.min.js"></script>
 <script>
-    var form = document.querySelector('#payment');
-    var submit = document.querySelector('input[type="submit"]');
-    braintree.client.create({
-        authorization: '{{ client_token }}'
-    }, function (clientErr, clientInstance) {
-        if (clientErr) {
-            console.error(clientErr);
-            return;
+    var braintree_client_token = "{{ braintree_client_token }}";
+    var button = document.querySelector('#submit-button');
+
+    braintree.dropin.create({
+      authorization: braintree_client_token,
+      container: '#braintree-dropin',
+      card: {
+        cardholderName: {
+            required: false
         }
-        braintree.hostedFields.create({
-            client: clientInstance,
-            styles: {
-                'input': { 'font-size': '13px' },
-                'input.invalid': { 'color': 'red' },
-                'input.valid': { 'color': 'green' }
-            },
-            fields: {
-                number: { selector: '#card-number' },
-                cvv: { selector: '#cvv' },
-                expirationDate: { selector: '#expiration-date' }
-            }
-        }, function (hostedFieldsErr, hostedFieldsInstance) {
-            if (hostedFieldsErr) {
-                console.error(hostedFieldsErr);
-                return;
-            }
-            submit.removeAttribute('disabled');
-            form.addEventListener('submit', function (event) {
-                event.preventDefault();
-                hostedFieldsInstance.tokenize(function (tokenizeErr,
-                    payload) {
-                    if (tokenizeErr) {
-                        console.error(tokenizeErr);
-                        return;
-                    }
-                    // set nonce to send to the server
-                    document.getElementById('nonce').value = payload.nonce;
-                    // submit form
-                    document.getElementById('payment').submit();
+      }
+    }, function (createErr, instance) {
+        button.addEventListener('click', function () {
+            instance.requestPaymentMethod(function (err, payload) {
+                $.ajax({
+                    type: 'POST',
+                    url: '{% url "payment:process" %}',
+                    data: {'payment_method_nonce': payload.nonce,
+                            'csrfmiddlewaretoken': '{{ csrf_token }}'}
+                }).done(function (result) {
+                  // There's a risk of the customer closing the browser window before callback
+                    // execution. Set up a listener so that if the window is closed, your server
+                    // is notified of the payment status
+                    console.log(result);
+                    window.addEventListener('beforeunload', function (event) {
+                        $.ajax({
+                            type: 'POST',
+                            url: '{% url "payment:process" %}',
+                            data: {'payment_method_nonce': payload.nonce,
+                                    'csrfmiddlewaretoken': '{{ csrf_token }}'}
+                        });
+                    });
+                    window.location.href = "{% url 'payment:done' %}";
+                }).fail(function (error) {
+                    console.log(error);
+                    window.location.href = "{% url 'payment:canceled' %}";
                 });
-            }, false);
+            });
         });
     });
 </script>

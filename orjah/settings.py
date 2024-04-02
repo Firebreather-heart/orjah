@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path 
-import os
+import os,sys
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -52,7 +52,7 @@ INSTALLED_APPS = [
     #3rd party
     
    # 'drf_yasg',
-    "rest_framework_swagger",
+    "drf_yasg",
     "rest_framework",
 ]
 
@@ -66,7 +66,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-     'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -96,7 +96,7 @@ TEMPLATES = [
 CART_SESSION_ID = 'cart'
 
 WSGI_APPLICATION = 'orjah.wsgi.application'
-
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
@@ -299,9 +299,14 @@ JAZZMIN_UI_TWEAKS = {
    # "dark_mode_theme": "darkly",
 }
 
-BRAINTREE_MERCHANT_ID = '76hbqm9wqvvk6hxv' # Merchant ID
-BRAINTREE_PUBLIC_KEY = '82zqyrzpw3f6w94z' # Public Key
-BRAINTREE_PRIVATE_KEY = '2da050d0f0892a85a4a08ce8e79a8c91' # Private key
+if (len(sys.argv) >= 2 and sys.argv[1] == 'runserver'):
+    BRAINTREE_PRODUCTION = False
+else:
+    BRAINTREE_PRODUCTION = True
+
+BRAINTREE_MERCHANT_ID = '5r2rnmr9b9y9zyvh' # Merchant ID
+BRAINTREE_PUBLIC_KEY = '7m8h7wmnfrqkn28m' # Public Key
+BRAINTREE_PRIVATE_KEY = '726fd4188043710abfeae853dbd42e2b' # Private key
 import braintree
 BRAINTREE_CONF = braintree.Configuration(
  braintree.Environment.Sandbox,
